@@ -18,32 +18,42 @@
 </head>
 <body>
 
-<div class="card">
-  <img src="assets/envelope.png" alt="envelope">
+<div class="page-container">
+  <div class="card">
+    <img src="assets/envelope.png" alt="envelope">
 
-  <div class="input-wrapper">
-    <input type="email" class="input" placeholder="Email Address">
+    <div class="input-wrapper">
+      <input type="email" class="input" placeholder="Email Address">
+    </div>
+
+    <div class="input-wrapper">
+      <input type="password" class="input password-input" placeholder="Password">
+      <span class="toggle-password">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#67B2D8"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+          <line class="eye-slash" x1="1" y1="1" x2="23" y2="23" stroke="#67B2D8" stroke-width="2" style="display:block;"></line>
+        </svg>
+      </span>
+    </div>
+
+    <button class="btn">Login</button>
+    <div class="error-msg"></div>
+
+    <div class="link">
+      Don’t have an account? <a href="signup.html">Sign Up</a>
+    </div>
   </div>
 
-  <div class="input-wrapper">
-  <input type="password" class="input password-input" placeholder="Password">
-  <span class="toggle-password">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#67B2D8"
-         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-      <circle cx="12" cy="12" r="3"></circle>
-      <line class="eye-slash" x1="1" y1="1" x2="23" y2="23" stroke="#67B2D8" stroke-width="2" style="display:block;"></line>
-    </svg>
-  </span>
-</div>
-
-  <button class="btn">Login</button>
-  <div class="error-msg" style="color:red; font-size:14px; margin-top:4px;"></div>
-
-  <div class="link">
-    Don’t have an account? <a href="signup.html">Sign Up</a>
+  <!-- Info Text Below Card -->
+  <div class="info-container">
+    <p class="info-text">
+      Want to read your message? <a href="index.html">Search your name!</a>
+    </p>
   </div>
 </div>
+
 <div class="watermark">made by icca</div>
 </body>
 </html>
