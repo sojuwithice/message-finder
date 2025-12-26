@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Find Your Message</title>
+  <link rel="stylesheet" href="css/receiver-dash.css" />
+  <link rel="icon" href="assets/envelope.PNG" type="image/png">
+  <link rel="apple-touch-icon" href="assets/envelope.PNG">
+  <script type="module" src="js/receiver.js"></script>
+</head>
+<body>
+
+  <!-- ================= CARD ================= -->
+  <div class="card">
+    <img src="assets/envelope.png" alt="envelope">
+
+    <input
+      type="text"
+      class="input"
+      placeholder="Enter your first name"
+    />
+
+    <button class="search-btn">Search</button>
+
+    <div class="result-text">
+      Waiting for your message .✦ ݁˖
+    </div>
+
+    <div class="send-message-text">
+    Want to send a message? 
+    <a href="login.html" class="send-link">Click here</a>
+  </div>
+  </div>
+
+
+  <!-- Found Message Modal -->
+<div class="modal found-modal">
+  <div class="confirm-box">
+    <p>May message sayo beh wowerzzz <br>ദ്ദി( • ᴗ < )</p>
+    <div class="confirm-actions">
+      <button class="open-btn">Open now</button>
+    </div>
+  </div>
+</div>
+
+<!-- No Message Modal -->
+<div class="modal no-message-modal">
+  <div class="confirm-box">
+    <p>Oh no! Waley pa siya message for you hehe <br> (ᵕ—ᴗ—)</p>
+    <div class="confirm-actions">
+      <button class="okay-btn">Okay :(</button>
+    </div>
+  </div>
+</div>
+
+
+  <!-- OVERLAY -->
+<div class="overlay"></div>
+
+<!-- COMPOSE MODAL -->
+<div class="modal compose-modal">
+  <div class="compose-box">
+    <div class="compose-header">
+  <label>To:</label>
+  <input
+    type="text"
+    id="toInput"
+    placeholder="Enter name"
+  />
+</div>
+
+    <textarea id="messageText" placeholder="Type a Message..."></textarea>
+    <button class="send-btn">Send</button>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal confirm-modal">
+  <div class="confirm-box">
+    <p>Are you sure you want to<br>send this message?</p>
+    <div class="confirm-actions">
+      <button class="cancel-btn">Cancel</button>
+      <button class="confirm-send-btn">Send</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="modal success-modal">
+  <div class="success-box">
+    <div class="check-icon">✔</div>
+    <p>Message sent!</p>
+  </div>
+</div>
+
+<!-- PREVIEW MODAL -->
+<div class="modal preview-modal">
+  <div class="compose-box">
+    <div class="compose-header">
+      <span id="preview-header"></span>
+      <button class="close-preview-btn">&times;</button> 
+    </div>
+    <textarea id="preview-content" readonly></textarea>
+    <div class="compose-footer">
+      <button class="delete-btn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="watermark">made by icca</div>
+
+
+</body>
+</html>

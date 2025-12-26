@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inbox</title>
+  <link rel="stylesheet" href="css/sender-dash.css" />
+  <link rel="icon" href="assets/envelope.PNG" type="image/png">
+  <link rel="apple-touch-icon" href="assets/envelope.PNG">
+  
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore-compat.js"></script>
+  
+  <!-- Custom JS -->
+  <script src="js/inbox.js" defer></script>
+</head>
+<body>
+
+<div class="app">
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <div class="envelope-wrapper">
+        <img src="assets/envelope.png" alt="Envelope Icon" />
+      </div>
+      <h1>Hi, <span id="user-name">User</span>!</h1>
+    </div>
+  </header>
+
+  <!-- MESSAGES HEADER ROW -->
+  <div class="messages-header">
+    <h2 class="section-title">Inbox</h2>
+    <a href="sender-dashboard.html" class="back-icon">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#5B74A8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6" />
+      </svg>
+      <span class="back-text">Back</span>
+    </a>
+  </div>
+
+  <!-- MESSAGE LIST -->
+  <div class="messages">
+    <!-- Messages will be dynamically inserted here via inbox.js -->
+  </div>
+
+  <!-- MESSAGE PREVIEW MODAL -->
+<div class="modal preview-modal hidden">
+  <div class="compose-box">
+    <div class="compose-header">
+      <span id="preview-header">From: <strong>Receiver</strong></span>
+      <button class="close-preview-btn">&times;</button>
+    </div>
+
+    <!-- ORIGINAL MESSAGE -->
+    <textarea id="preview-content" readonly></textarea>
+
+    <div class="preview-replies">
+      <!-- replies injected here -->
+    </div>
+
+    <div class="compose-footer">
+      <button class="delete-btn">Delete</button>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Overlay for modal -->
+  <div class="overlay hidden"></div>
+</div>
+<div class="watermark">made by icca</div>
+</body>
+</html>

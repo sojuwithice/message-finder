@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="css/login-signup.css">
+  <link rel="icon" href="assets/envelope.PNG" type="image/png">
+  <link rel="apple-touch-icon" href="assets/envelope.PNG">
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore-compat.js"></script>
+
+  <!-- Your auth JS -->
+  <script src="js/auth.js" defer></script>
+</head>
+<body>
+
+<div class="card">
+  <img src="assets/envelope.png" alt="envelope">
+
+  <div class="input-wrapper">
+    <input type="email" class="input" placeholder="Email Address">
+  </div>
+
+  <div class="input-wrapper">
+  <input type="password" class="input password-input" placeholder="Password">
+  <span class="toggle-password">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#67B2D8"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+      <circle cx="12" cy="12" r="3"></circle>
+      <line class="eye-slash" x1="1" y1="1" x2="23" y2="23" stroke="#67B2D8" stroke-width="2" style="display:block;"></line>
+    </svg>
+  </span>
+</div>
+
+  <button class="btn">Login</button>
+  <div class="error-msg" style="color:red; font-size:14px; margin-top:4px;"></div>
+
+  <div class="link">
+    Don’t have an account? <a href="signup.html">Sign Up</a>
+  </div>
+</div>
+<div class="watermark">made by icca</div>
+</body>
+</html>
