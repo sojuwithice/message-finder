@@ -356,7 +356,7 @@ body {
   align-items: center;
   gap: 16px;
   width: 100%;
-  max-width: 360px; /* same as card */
+  max-width: 360px; 
 }
 
 /* Info container under card */
@@ -368,6 +368,7 @@ body {
   padding: 12px 16px;
   box-sizing: border-box;
   box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  animation: fadeUp 0.6s ease;
 }
 
 /* Info text */

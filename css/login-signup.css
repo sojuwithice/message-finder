@@ -169,13 +169,14 @@ body {
   padding: 12px 16px;   
   box-sizing: border-box;
   box-shadow: 0 6px 15px rgba(0,0,0,0.1); 
+  animation: fadeUp 0.6s ease;
 }
 
 /* Info text */
 .info-text {
   font-size: 14px;
   color: #000;
-  word-wrap: break-word; /* ensures long text wraps inside container */
+  word-wrap: break-word; 
   margin: 0;
 }
 
