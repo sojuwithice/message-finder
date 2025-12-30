@@ -120,7 +120,7 @@ searchBtn.addEventListener("click", async () => {
       noMessageModal.className = "modal found-modal active";
       noMessageModal.innerHTML = `
         <div class="confirm-box">
-          <p>Oh no! Waley pa siya message for you hehe (ᵕ—ᴗ—)</p>
+          <p>Oh no! Waley pa message for you hehe (ᵕ—ᴗ—)</p>
           <div class="confirm-actions">
             <button class="okay-btn">Okay :(</button>
           </div>
