@@ -167,25 +167,39 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ---------- MESSAGE PREVIEW ----------
-    function showMessage(index) {
-    const msg = currentThread[index];
-    if (!msg) return;
+function showMessage(index) {
+  const msg = currentThread[index];
+  if (!msg) return;
 
-    currentIndex = index;
-    selectedMessageId = msg.id;
+  currentIndex = index;
+  selectedMessageId = msg.id;
 
-    previewHeader.textContent = "To: " + msg.toName;
-    previewContent.value = msg.text;
+  previewHeader.textContent = "To: " + msg.toName;
+  previewContent.value = msg.text || "";
 
-    // --- AUTO RESIZE TEXTAREA ---
-    previewContent.style.height = "150px"; 
-    previewContent.style.height = previewContent.scrollHeight + "px";
+  // --- MANAGE LONG MESSAGES ---
+  const defaultHeight = 150; 
+  const maxHeight = 400; 
 
-    messageCounter.textContent = `${index + 1} / ${currentThread.length}`;
+  previewContent.style.height = defaultHeight + "px"; 
+  previewContent.style.overflowY = "hidden"; 
 
-    prevBtn.disabled = index === 0;
-    nextBtn.disabled = index === currentThread.length - 1;
+  const scrollHeight = previewContent.scrollHeight;
+  if (scrollHeight > maxHeight) {
+    previewContent.style.height = maxHeight + "px";
+    previewContent.style.overflowY = "auto"; 
+  } else if (scrollHeight > defaultHeight) {
+    previewContent.style.height = scrollHeight + "px";
   }
+
+  // Update counter
+  messageCounter.textContent = `${index + 1} / ${currentThread.length}`;
+
+  // Update navigation buttons
+  prevBtn.disabled = index === 0;
+  nextBtn.disabled = index === currentThread.length - 1;
+}
+
 
 
   messagesList.addEventListener('click', (e) => {

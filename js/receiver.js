@@ -81,9 +81,21 @@ function showMessage(index) {
   previewHeader.textContent = `From: ${msg.from}`;
   previewContent.value = msg.message || "";
 
-  // --- AUTO RESIZE TEXTAREA ---
-  previewContent.style.height = "150px"; 
-  previewContent.style.height = previewContent.scrollHeight + "px";
+  // --- MANAGE LONG MESSAGES ---
+  const defaultHeight = 150; 
+  const maxHeight = 400; 
+
+  previewContent.style.height = defaultHeight + "px"; 
+  previewContent.style.overflowY = "hidden"; 
+
+  // auto-expand if content is bigger
+  const scrollHeight = previewContent.scrollHeight;
+  if (scrollHeight > maxHeight) {
+    previewContent.style.height = maxHeight + "px";
+    previewContent.style.overflowY = "auto"; 
+  } else if (scrollHeight > defaultHeight) {
+    previewContent.style.height = scrollHeight + "px";
+  }
 
   if (counter) {
     counter.textContent = `${index + 1} / ${messages.length}`;
@@ -92,6 +104,7 @@ function showMessage(index) {
   if (prevBtn) prevBtn.disabled = index === 0;
   if (nextBtn) nextBtn.disabled = index === messages.length - 1;
 }
+
 
 
 /* Search Message */
