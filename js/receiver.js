@@ -35,6 +35,10 @@ const previewHeader = document.getElementById("preview-header");
 const previewContent = document.getElementById("preview-content");
 const closePreviewBtn = previewModal.querySelector(".close-preview-btn");
 
+const prevBtn = previewModal.querySelector(".prev-btn");
+const nextBtn = previewModal.querySelector(".next-btn");
+const counter = document.getElementById("message-counter");
+
 const composeModal = document.querySelector(".compose-modal");
 const toInput = document.getElementById("toInput");
 const messageText = document.getElementById("messageText");
@@ -48,9 +52,12 @@ const overlay = document.querySelector(".overlay");
 
 const replyBtn = previewModal.querySelector(".delete-btn");
 
+/* STATE */
 let currentMessage = null;
+let messages = [];
+let currentIndex = 0;
 
-// Show/Hide Modal Helper Functions
+/* Show/Hide Modal Helper Functions */
 const show = modal => modal.classList.add("active");
 const hide = modal => modal.classList.remove("active");
 
@@ -64,7 +71,25 @@ function closeOverlay() {
   overlay.classList.add("hidden");
 }
 
-// Search Message
+/* SHOW MESSAGE */
+function showMessage(index) {
+  const msg = messages[index];
+  if (!msg) return;
+
+  currentMessage = msg;
+
+  previewHeader.textContent = `From: ${msg.from}`;
+  previewContent.value = msg.message || "";
+
+  if (counter) {
+    counter.textContent = `${index + 1} / ${messages.length}`;
+  }
+
+  if (prevBtn) prevBtn.disabled = index === 0;
+  if (nextBtn) nextBtn.disabled = index === messages.length - 1;
+}
+
+/* Search Message */
 searchBtn.addEventListener("click", async () => {
   const name = nameInput.value.trim().toLowerCase();
   resultText.textContent = "Searching... ⋆˚✿˖°";
@@ -79,8 +104,14 @@ searchBtn.addEventListener("click", async () => {
     const snapshot = await getDocs(q);
 
     if (!snapshot.empty) {
-      const doc = snapshot.docs[0];
-      currentMessage = { id: doc.id, ...doc.data() };
+      messages = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+      currentIndex = 0;
+      currentMessage = messages[0];
+
       show(foundModal);
       openOverlay();
       resultText.textContent = "";
@@ -111,19 +142,36 @@ searchBtn.addEventListener("click", async () => {
   }
 });
 
-// Open Message
+/* Open Message */
 openBtn.addEventListener("click", () => {
   if (!currentMessage) return;
 
   hide(foundModal);
-  previewHeader.textContent = `From: ${currentMessage.from}`;
-  previewContent.value = currentMessage.message || "";
-
+  showMessage(currentIndex);
   show(previewModal);
   openOverlay();
 });
 
-// Close Preview
+/* Prev / Next */
+if (nextBtn) {
+  nextBtn.addEventListener("click", () => {
+    if (currentIndex < messages.length - 1) {
+      currentIndex++;
+      showMessage(currentIndex);
+    }
+  });
+}
+
+if (prevBtn) {
+  prevBtn.addEventListener("click", () => {
+    if (currentIndex > 0) {
+      currentIndex--;
+      showMessage(currentIndex);
+    }
+  });
+}
+
+/* Close Preview */
 function closePreview() {
   hide(previewModal);
   closeOverlay();
@@ -132,7 +180,7 @@ function closePreview() {
 closePreviewBtn.addEventListener("click", closePreview);
 overlay.addEventListener("click", closePreview);
 
-// Reply
+/* Reply */
 replyBtn.textContent = "Reply";
 replyBtn.addEventListener("click", () => {
   if (!currentMessage) return;
@@ -148,7 +196,7 @@ replyBtn.addEventListener("click", () => {
   openOverlay();
 });
 
-// Send Flow
+/* Send Flow */
 composeModal.querySelector(".send-btn").addEventListener("click", () => {
   if (!toInput.value.trim() || !messageText.value.trim()) return;
 
@@ -156,13 +204,13 @@ composeModal.querySelector(".send-btn").addEventListener("click", () => {
   show(confirmModal);
 });
 
-// Cancel Send
+/* Cancel Send */
 cancelBtn.addEventListener("click", () => {
   hide(confirmModal);
   show(composeModal);
 });
 
-// Confirm Send
+/* Confirm Send */
 confirmSendBtn.addEventListener("click", async () => {
   try {
     await addDoc(collection(db, "replies"), {
@@ -180,15 +228,10 @@ confirmSendBtn.addEventListener("click", async () => {
 
     setTimeout(() => {
       hide(sentSuccessModal);
-
-      
-      previewHeader.textContent = `From: ${currentMessage.from}`;
-      previewContent.value = currentMessage.message || "";
-
+      showMessage(currentIndex);
       show(previewModal);
       openOverlay();
-
-    }, 600); 
+    }, 600);
 
     messageText.value = "";
     toInput.value = "";
@@ -199,5 +242,3 @@ confirmSendBtn.addEventListener("click", async () => {
     resultText.textContent = "Failed to send message ";
   }
 });
-
-

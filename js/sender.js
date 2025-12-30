@@ -33,7 +33,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const previewHeader = document.getElementById('preview-header');
   const previewContent = document.getElementById('preview-content');
 
+  const prevBtn = document.querySelector('.prev-btn');
+  const nextBtn = document.querySelector('.next-btn');
+  const messageCounter = document.getElementById('message-counter');
+
+  const closePreviewBtn = document.querySelector('.close-preview-btn');
+  const closeComposeBtn = document.querySelector('.close-compose-btn');
+  const logoutBtn = document.getElementById('logout-btn');
+
   let selectedMessageId = null;
+
+  // THREAD STATE
+  let groupedMessages = {};
+  let currentThread = [];
+  let currentIndex = 0;
 
   // ---------- AUTH ----------
   auth.onAuthStateChanged(async (user) => {
@@ -69,16 +82,27 @@ document.addEventListener('DOMContentLoaded', () => {
       .orderBy("createdAt", "desc")
       .onSnapshot((snap) => {
         messagesList.innerHTML = "";
+        groupedMessages = {};
+
         snap.forEach(doc => {
-          const msg = doc.data();
+          const msg = { id: doc.id, ...doc.data() };
           if (msg.senderId !== uid) return;
+
+          const key = msg.to_lower;
+          if (!groupedMessages[key]) groupedMessages[key] = [];
+          groupedMessages[key].push(msg);
+        });
+
+        Object.keys(groupedMessages).forEach(key => {
+          const thread = groupedMessages[key];
+          const latest = thread[0];
 
           const div = document.createElement('div');
           div.className = 'message-item';
-          div.dataset.id = doc.id;
+          div.dataset.key = key;
           div.innerHTML = `
-            <span class="name">${msg.toName || "Unknown"}</span>
-            <span class="preview">${msg.text}</span>
+            <span class="name">${latest.toName}</span>
+            <span class="preview">${latest.text}</span>
           `;
           messagesList.appendChild(div);
         });
@@ -109,143 +133,139 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   confirmSendBtn.addEventListener('click', async () => {
-  const user = auth.currentUser;
-  const receiverName = toInput.value.trim();
+    const user = auth.currentUser;
+    const receiverName = toInput.value.trim();
 
-  if (!receiverName || !messageText.value.trim()) return;
+    if (!receiverName || !messageText.value.trim()) return;
 
-  // Get sender's name
-  const userSnap = await db.collection("users").doc(user.uid).get();
-  const senderName = userSnap.exists ? userSnap.data().firstName : "Unknown";
+    // Get sender's name
+    const userSnap = await db.collection("users").doc(user.uid).get();
+    const senderName = userSnap.exists ? userSnap.data().firstName : "Unknown";
 
-  await db.collection("messages").add({
-    senderId: user.uid,
+    await db.collection("messages").add({
+      senderId: user.uid,
+      from: senderName,
+      from_lower: senderName.toLowerCase(),
+      to: receiverName,
+      to_lower: receiverName.toLowerCase(),
+      toName: receiverName,
+      message: messageText.value.trim(),
+      text: messageText.value.trim(),
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
 
-    // SENDER INFO
-    from: senderName,
-    from_lower: senderName.toLowerCase(),
+    toInput.value = "";
+    messageText.value = "";
 
-    // RECEIVER INFO
-    to: receiverName,
-    to_lower: receiverName.toLowerCase(),
-    toName: receiverName,
-
-    message: messageText.value.trim(),
-    text: messageText.value.trim(),
-
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    hide(confirmModal);
+    show(successModal);
+    setTimeout(() => hide(successModal), 1500);
   });
 
-  toInput.value = "";
-  messageText.value = "";
-
-  hide(confirmModal);
-  show(successModal);
-  setTimeout(() => hide(successModal), 1500);
-});
-
-
-
   // ---------- MESSAGE PREVIEW ----------
+  function showMessage(index) {
+    const msg = currentThread[index];
+    if (!msg) return;
+
+    currentIndex = index;
+    selectedMessageId = msg.id;
+
+    previewHeader.textContent = "To: " + msg.toName;
+    previewContent.value = msg.text;
+
+    messageCounter.textContent = `${index + 1} / ${currentThread.length}`;
+
+    prevBtn.disabled = index === 0;
+    nextBtn.disabled = index === currentThread.length - 1;
+  }
+
   messagesList.addEventListener('click', (e) => {
     const item = e.target.closest('.message-item');
     if (!item) return;
 
-    selectedMessageId = item.dataset.id;
-    previewHeader.textContent = "To: " + item.querySelector('.name').textContent;
-    previewContent.value = item.querySelector('.preview').textContent;
+    currentThread = groupedMessages[item.dataset.key];
+    currentIndex = 0;
 
+    showMessage(currentIndex);
     show(previewModal);
   });
 
+  prevBtn.addEventListener('click', () => {
+    if (currentIndex > 0) showMessage(currentIndex - 1);
+  });
+
+  nextBtn.addEventListener('click', () => {
+    if (currentIndex < currentThread.length - 1) showMessage(currentIndex + 1);
+  });
+
   // ---------- DELETE WITH CONFIRMATION ----------
-deleteBtn.addEventListener('click', () => {
-  if (!selectedMessageId) return;
+  deleteBtn.addEventListener('click', () => {
+    if (!selectedMessageId) return;
 
-  // Create a delete confirmation modal dynamically
-  const deleteConfirmModal = document.createElement('div');
-  deleteConfirmModal.className = "modal confirm-modal active";
-  deleteConfirmModal.innerHTML = `
-    <div class="confirm-box">
-      <p>Are you sure you want to delete this message?</p>
-      <div class="confirm-actions">
-        <button class="cancel-delete-btn">Cancel</button>
-        <button class="confirm-delete-btn">Delete</button>
+    const deleteConfirmModal = document.createElement('div');
+    deleteConfirmModal.className = "modal confirm-modal active";
+    deleteConfirmModal.innerHTML = `
+      <div class="confirm-box">
+        <p>Are you sure you want to delete this message?</p>
+        <div class="confirm-actions">
+          <button class="cancel-delete-btn">Cancel</button>
+          <button class="confirm-delete-btn">Delete</button>
+        </div>
       </div>
-    </div>
-  `;
-  document.body.appendChild(deleteConfirmModal);
-  overlay.classList.add('active');
+    `;
+    document.body.appendChild(deleteConfirmModal);
+    overlay.classList.add('active');
 
-  const cancelDeleteBtn = deleteConfirmModal.querySelector('.cancel-delete-btn');
-  const confirmDeleteBtn = deleteConfirmModal.querySelector('.confirm-delete-btn');
+    const cancelDeleteBtn = deleteConfirmModal.querySelector('.cancel-delete-btn');
+    const confirmDeleteBtn = deleteConfirmModal.querySelector('.confirm-delete-btn');
 
-  cancelDeleteBtn.addEventListener('click', () => {
-    hide(deleteConfirmModal);
-    deleteConfirmModal.remove();
+    cancelDeleteBtn.addEventListener('click', () => {
+      hide(deleteConfirmModal);
+      deleteConfirmModal.remove();
+    });
+
+    confirmDeleteBtn.addEventListener('click', async () => {
+      await db.collection("messages").doc(selectedMessageId).delete();
+
+      hide(previewModal);
+      hide(deleteConfirmModal);
+      deleteConfirmModal.remove();
+
+      const originalText = successModal.querySelector('p').textContent;
+      successModal.querySelector('p').textContent = "Deleted successfully!";
+      show(successModal);
+
+      setTimeout(() => {
+        hide(successModal);
+        successModal.querySelector('p').textContent = originalText;
+      }, 1500);
+    });
   });
 
-  confirmDeleteBtn.addEventListener('click', async () => {
-    // Delete the message
-    await db.collection("messages").doc(selectedMessageId).delete();
-
-    // Hide preview modal
-    hide(previewModal);
-
-    // Hide delete confirmation modal
-    hide(deleteConfirmModal);
-    deleteConfirmModal.remove();
-
-    // Show success modal with custom text for deletion
-    const originalText = successModal.querySelector('p').textContent;
-    successModal.querySelector('p').textContent = "Deleted successfully!";
-    show(successModal);
-
-    setTimeout(() => {
-      hide(successModal);
-      // Restore original success text for sending messages
-      successModal.querySelector('p').textContent = originalText;
-    }, 1500); // auto-close
+  closePreviewBtn.addEventListener('click', () => {
+    previewModal.classList.remove('active');
+    overlay.classList.remove('active');
   });
-});
 
-const closePreviewBtn = document.querySelector('.close-preview-btn');
-
-closePreviewBtn.addEventListener('click', () => {
-  previewModal.classList.remove('active');
-  overlay.classList.remove('active');
-});
-
-
-  // ---------- STOP PROPAGATION INSIDE MODAL ----------
   [composeModal, previewModal].forEach(modal => {
     modal.addEventListener('click', (e) => e.stopPropagation());
   });
 
-  // ---------- OVERLAY ----------
   overlay.addEventListener('click', () => {
     [composeModal, confirmModal, successModal, previewModal].forEach(hide);
     const existingDeleteModal = document.querySelector('.modal.confirm-modal.active');
     if (existingDeleteModal) existingDeleteModal.remove();
   });
 
-  const logoutBtn = document.getElementById('logout-btn');
+  logoutBtn.addEventListener('click', () => {
+    firebase.auth().signOut()
+      .then(() => { window.location.href = 'login.html'; })
+      .catch((error) => { console.error('Logout error:', error); });
+  });
 
-logoutBtn.addEventListener('click', () => {
-  firebase.auth().signOut()
-    .then(() => {
-      window.location.href = 'login.html'; 
-    })
-    .catch((error) => {
-      console.error('Logout error:', error);
-    });
-});
-
-const closeComposeBtn = document.querySelector('.close-compose-btn');
-
-closeComposeBtn.addEventListener('click', () => {
-  composeModal.classList.remove('active');
-  overlay.classList.remove('active');
-});
+  closeComposeBtn.addEventListener('click', () => {
+    composeModal.classList.remove('active');
+    overlay.classList.remove('active');
+  });
 
 });

@@ -99,7 +99,7 @@ h1 {
   flex-direction: column;
   gap: 16px;
 
-  max-height: 400px;  
+  max-height: 750px;  
   overflow-y: auto;   
   padding-right: 8px; 
 }
@@ -389,6 +389,47 @@ h1 {
   transform: scale(1.2);
 }
 
+
+.compose-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.prev-btn,
+.next-btn {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: none;
+  background: #CDE6F3;
+  color: #000;
+  font-size: 13px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.prev-btn:hover,
+.next-btn:hover {
+  background: #eaf4fb;
+  transform: scale(1.05);
+}
+
+.prev-btn:disabled,
+.next-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.counter {
+  font-size: 12px;
+  color: #4A70A9;
+  opacity: 0.7;
+  min-width: 40px;
+  text-align: center;
+}
 
 
 

@@ -288,19 +288,62 @@ body {
 
 .compose-footer {
   display: flex;
-  justify-content: flex-end; 
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   margin-top: 12px;
 }
 
-.delete-btn {
-  padding: 6px 20px;
+.prev-btn,
+.next-btn {
+  padding: 6px 14px;
   border-radius: 999px;
   border: none;
-  background: #8CB8D8; 
+  background: #CDE6F3;
+  color: #000;
+  font-size: 13px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.prev-btn:hover,
+.next-btn:hover {
+  background: #eaf4fb;
+  transform: scale(1.05);
+}
+
+.prev-btn:disabled,
+.next-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.counter {
+  font-size: 12px;
+  color: #4A70A9;
+  opacity: 0.7;
+  min-width: 40px;
+  text-align: center;
+}
+
+
+.delete-btn {
+  padding: 6px 18px;
+  border-radius: 999px;
+  border: none;
+  background: #8CB8D8;
   color: #000;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
+  transition: transform 0.2s ease, background 0.2s ease;
 }
+
+.delete-btn:hover {
+  background: #6fa4c8;
+  transform: scale(1.05);
+}
+
 
 .close-preview-btn {
   background: transparent;
