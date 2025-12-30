@@ -94,18 +94,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         Object.keys(groupedMessages).forEach(key => {
-          const thread = groupedMessages[key];
-          const latest = thread[0];
+        const thread = groupedMessages[key];
+        const latest = thread[0];
 
-          const div = document.createElement('div');
-          div.className = 'message-item';
-          div.dataset.key = key;
-          div.innerHTML = `
-            <span class="name">${latest.toName}</span>
-            <span class="preview">${latest.text}</span>
-          `;
-          messagesList.appendChild(div);
-        });
+        // Truncate text for message list preview
+        const previewText = latest.text.length > 50 ? latest.text.slice(0, 50) + "…" : latest.text;
+
+        const div = document.createElement('div');
+        div.className = 'message-item';
+        div.dataset.key = key;
+        div.innerHTML = `
+          <span class="name">${latest.toName}</span>
+          <span class="preview">${previewText}</span>
+        `;
+        messagesList.appendChild(div);
+      });
+
 
         if (!messagesList.children.length) {
           messagesList.innerHTML = `<p style="color:#888; padding:10px;">No messages yet.</p>`;
@@ -163,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ---------- MESSAGE PREVIEW ----------
-  function showMessage(index) {
+    function showMessage(index) {
     const msg = currentThread[index];
     if (!msg) return;
 
@@ -173,11 +177,16 @@ document.addEventListener('DOMContentLoaded', () => {
     previewHeader.textContent = "To: " + msg.toName;
     previewContent.value = msg.text;
 
+    // --- AUTO RESIZE TEXTAREA ---
+    previewContent.style.height = "150px"; 
+    previewContent.style.height = previewContent.scrollHeight + "px";
+
     messageCounter.textContent = `${index + 1} / ${currentThread.length}`;
 
     prevBtn.disabled = index === 0;
     nextBtn.disabled = index === currentThread.length - 1;
   }
+
 
   messagesList.addEventListener('click', (e) => {
     const item = e.target.closest('.message-item');

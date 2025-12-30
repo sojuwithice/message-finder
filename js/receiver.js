@@ -81,6 +81,10 @@ function showMessage(index) {
   previewHeader.textContent = `From: ${msg.from}`;
   previewContent.value = msg.message || "";
 
+  // --- AUTO RESIZE TEXTAREA ---
+  previewContent.style.height = "150px"; 
+  previewContent.style.height = previewContent.scrollHeight + "px";
+
   if (counter) {
     counter.textContent = `${index + 1} / ${messages.length}`;
   }
@@ -88,6 +92,7 @@ function showMessage(index) {
   if (prevBtn) prevBtn.disabled = index === 0;
   if (nextBtn) nextBtn.disabled = index === messages.length - 1;
 }
+
 
 /* Search Message */
 searchBtn.addEventListener("click", async () => {
